@@ -16,7 +16,7 @@ export default async function NavbarComponent() {
   return (
     <nav>
       <section className="container flex items-center justify-between h-20 ">
-        <h1 className="text-2xl font-semibold text-primary-500">J.UDGE</h1>
+        <h1 className="text-2xl font-semibold text-primary-500 shadow p-2 px-4 bg-background border">J.UDGE</h1>
         <div className="flex items-center gap-5">
           <NavbarLink />
           <ThemeSwitcher />

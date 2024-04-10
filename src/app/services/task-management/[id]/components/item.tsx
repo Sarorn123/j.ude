@@ -48,7 +48,7 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
           transform: CSS.Translate.toString(transform),
         }}
         className={clsx(
-          "px-5 py-4 shadow-lg border  rounded-xl w-full  cursor-pointer",
+          "px-5 py-4 shadow-lg bg-background rounded-xl w-full  cursor-pointer",
           isDragging && "opacity-50"
         )}
       >
