@@ -766,7 +766,7 @@ export default function TaskManagement({ params: { id } }: Props) {
         </ModalContent>
       </Modal>
       <div className="flex items-center justify-between gap-y-2 -mt-5 md:-mt-0">
-        <h1 className="md:text-xl ">Task Management</h1>
+        <h1 className="md:text-xl font-semibold">{project?.name}</h1>
         <Button
           onClick={onOpenContainerModal}
           color="primary"
@@ -776,7 +776,7 @@ export default function TaskManagement({ params: { id } }: Props) {
           Add <span className="hidden md:inline">Container</span>
         </Button>
       </div>
-      <div className="mt-5 md:mt-10">
+      <div className="mt-5">
         <div className="grid  md:grid-cols-2 xl:grid-cols-3 gap-6 overflow-auto">
           <DndContext
             sensors={sensors}

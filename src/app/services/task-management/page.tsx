@@ -23,6 +23,7 @@ import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/jotai/user";
+import { Metadata } from "next";
 
 type Props = {};
 

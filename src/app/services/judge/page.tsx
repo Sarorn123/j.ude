@@ -193,7 +193,7 @@ const Judge = (props: Props) => {
             <p className="mt-20 text-xl">No projects yet 🥲</p>
           ) : null}
         </div>
-        <div className="mt-5 md:mt-10 gap-10 grid md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-5 gap-10 grid md:grid-cols-2 xl:grid-cols-4">
           {projects &&
             projects.map((project, index) => (
               <div
