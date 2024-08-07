@@ -5,15 +5,21 @@ import ThemeSwitcher from "../reusable/theme-switcher";
 import { getCurrentUser } from "@/app/lib/session";
 import Link from "next/link";
 import { AvatarDropDown } from "../reusable/avatar-dropdown";
+import Image from "next/image";
 export default async function NavbarComponent() {
   const user = await getCurrentUser();
 
   return (
     <nav>
       <section className="container flex items-center justify-between h-20 ">
-        <h1 className=" md:text-2xl font-semibold text-primary-500 p-2">
-          J.UDGE
-        </h1>
+        <Image
+          src={"/logo.png"}
+          width={200}
+          height={200}
+          className="w-32 h-16 md:h-20 object-cover"
+          alt={"logo"}
+        />
+
         <div className=" items-center gap-5 flex">
           <div className="hidden md:block">
             <NavbarLink />

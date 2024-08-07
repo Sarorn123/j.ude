@@ -11,7 +11,18 @@ const poppin = Poppins({
 
 export const metadata: Metadata = {
   title: "J.UDGE",
-  description: "",
+  description:
+    "TaskMaster & ReviewHub is your all-in-one solution for staying organized and sharing your opinions. Whether you are managing a complex project or simply deciding which movie to watch next, this app provides the tools you need to succeed. Join a community of organized, opinionated users and make your voice heard while staying on top of your tasks.",
+  icons: {
+    icon: "/logo.png",
+  },
+  openGraph: {
+    title: "J.UDGE",
+    description:
+      "TaskMaster & ReviewHub is your all-in-one solution for staying organized and sharing your opinions. Whether you are managing a complex project or simply deciding which movie to watch next, this app provides the tools you need to succeed. Join a community of organized, opinionated users and make your voice heard while staying on top of your tasks.",
+    url: "https://j-udge.vercel.app",
+    images: ["/logo1.png"],
+  },
 };
 
 export default function RootLayout({
