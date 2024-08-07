@@ -1,5 +1,6 @@
 "use server"
 
+import { env } from "@/app/lib/env"
 import prisma from "@/app/lib/prisma"
 import { Judge } from "@/jotai/judge"
 
@@ -51,6 +52,7 @@ export async function deleteProject(id: string) {
 }
 
 export async function editProject(id: string, containers: Judge[]) {
+
     const data = containers.map((container) => {
         return {
             title: container.title,
@@ -69,12 +71,13 @@ export async function editProject(id: string, containers: Judge[]) {
     })
 
     // remove image from old miss container
-    const allNewContanerIds = containers.map((container) => container.id)
-    for (const c of allContainer) {
-        if (!allNewContanerIds.includes(c.id)) {
-            await deleteImage(c.items).catch((e) => console.error(e))
+    const allNewContanerIds = containers.map((container) => container.id.replaceAll("container-", ""))
+    allContainer.forEach(async (dbContainer) => {
+        // if existed in db not have in new containers. coZ new containers can have in db also create new
+        if (!allNewContanerIds.includes(dbContainer.id)) {
+            await deleteImage(dbContainer.items).catch((e) => console.error(e))
         }
-    }
+    })
     await prisma.judgeContainer.deleteMany({
         where: {
             projectId: id
@@ -91,8 +94,8 @@ export async function editProject(id: string, containers: Judge[]) {
 }
 
 export async function deleteImage(image: string | string[]) {
-    const url = process.env.KINDE_SITE_URL! + "/api/uploadthing";
-
+    if (!image) return
+    const url = env.HOST_NAME + "/api/uploadthing";
     const options = {
         method: 'DELETE',
         headers: {
@@ -100,7 +103,6 @@ export async function deleteImage(image: string | string[]) {
         },
         body: JSON.stringify(image)
     };
-
     return await fetch(url, options)
         .then(response => {
             return response.json();
@@ -108,15 +110,4 @@ export async function deleteImage(image: string | string[]) {
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
-}
-
-export async function onEditContainer(id: string, title: string) {
-    return await prisma.judgeContainer.update({
-        where: {
-            id
-        },
-        data: {
-            title
-        }
-    })
 }

@@ -1,7 +1,14 @@
-import { withAuth } from "@kinde-oss/kinde-auth-nextjs/middleware";
+import { NextRequest, NextResponse } from "next/server";
 
-export default withAuth(async function middleware(req: Request & { kindeAuth: any }) {
-});
+export const middleware = async function (req: NextRequest) {
+  const cookie = req.cookies.get("auth_session");
+  const pathname = req.nextUrl.pathname;
+
+  if (!cookie && (pathname.includes("/task-management") || pathname.includes("/judge"))) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
+}
 
 export const config = {
   matcher: ["/services/:path*"],

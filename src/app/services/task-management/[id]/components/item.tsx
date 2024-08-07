@@ -58,7 +58,9 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
             {deadline && (
               <span
                 className={`text-sm ${
-                  new Date() > new Date(deadline) ? "text-red-500" : "text-primary-500"
+                  new Date() > new Date(deadline)
+                    ? "text-red-500"
+                    : "text-primary-500"
                 }`}
               >
                 {format(deadline, "( dd-MM-yy )")}
@@ -70,19 +72,19 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
               className="border p-2 text-xs active:scale-95 rounded-xl shadow-lg hover:shadow-xl"
               onClick={() => onActiveItem && onActiveItem(id)}
             >
-              <PencilIcon className="w-5 h-5 text-secondary-500" />
+              <PencilIcon className="w-4 h-4 md:w-5 md:h-5 text-secondary-500" />
             </button>
             <button
               className="border p-2 text-xs active:scale-95 rounded-xl shadow-lg hover:shadow-xl"
               onClick={() => onActiveItem && onActiveItem(id, true)}
             >
-              <TrashIcon className="w-5 h-5 text-red-500" />
+              <TrashIcon className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
             </button>
             <button
               className="border p-2 text-xs rounded-xl shadow-lg hover:shadow-xl"
               {...listeners}
             >
-              <HandRaisedIcon className="w-5 h-5 hover:cursor-grab text-primary-500" />
+              <HandRaisedIcon className="w-4 h-4 md:w-5 md:h-5 hover:cursor-grab text-primary-500" />
             </button>
           </div>
         </div>

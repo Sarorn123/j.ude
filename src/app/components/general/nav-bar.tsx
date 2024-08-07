@@ -1,37 +1,37 @@
 import React from "react";
-import { Avatar, Button } from "@nextui-org/react";
-import {
-  getKindeServerSession,
-  LoginLink,
-  LogoutLink,
-} from "@kinde-oss/kinde-auth-nextjs/server";
-import Link from "next/link";
+import { Button } from "@nextui-org/react";
 import NavbarLink from "./nav-bar-link";
 import ThemeSwitcher from "../reusable/theme-switcher";
+import { getCurrentUser } from "@/app/lib/session";
+import Link from "next/link";
+import { AvatarDropDown } from "../reusable/avatar-dropdown";
 export default async function NavbarComponent() {
-  const { getUser, isAuthenticated } = getKindeServerSession();
-  const user = await getUser();
-  const authenticated = await isAuthenticated();
+  const user = await getCurrentUser();
 
   return (
     <nav>
       <section className="container flex items-center justify-between h-20 ">
-        <h1 className="text-2xl font-semibold text-primary-500 shadow p-2 px-4 bg-background border">J.UDGE</h1>
-        <div className="flex items-center gap-5">
-          <NavbarLink />
+        <h1 className=" md:text-2xl font-semibold text-primary-500 p-2">
+          J.UDGE
+        </h1>
+        <div className=" items-center gap-5 flex">
+          <div className="hidden md:block">
+            <NavbarLink />
+          </div>
           <ThemeSwitcher />
-          {authenticated ? (
+          {user ? (
             <>
-              <Avatar src={user?.picture || ""} name={user?.given_name || ""} />
-              <LogoutLink>
-                <Button color="danger">Logout</Button>
-              </LogoutLink>
+              <AvatarDropDown user={user} />
             </>
           ) : (
-            <LoginLink>
+            <Link href={"/auth/login"}>
               <Button color="primary">Log In</Button>
-            </LoginLink>
+            </Link>
           )}
+        </div>
+
+        <div className="fixed bottom-0 z-50 left-0 w-full md:hidden backdrop-blur-xl py-5 flex justify-center items-center border-t">
+          <NavbarLink />
         </div>
       </section>
     </nav>

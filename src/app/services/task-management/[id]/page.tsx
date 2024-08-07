@@ -25,6 +25,7 @@ import {
 
 import {
   Button,
+  DatePicker,
   Input,
   Modal,
   ModalBody,
@@ -51,6 +52,13 @@ import {
 import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
 import { compareAsc, format } from "date-fns";
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  parseDate,
+  today,
+} from "@internationalized/date";
+import { useLocale, useDateFormatter } from "@react-aria/i18n";
 
 type Props = {
   params: { id: string };
@@ -147,7 +155,7 @@ export default function TaskManagement({ params: { id } }: Props) {
               {
                 id: newId,
                 name: itemName,
-                deadline: new Date(deadline),
+                deadline: deadline.toDate(getLocalTimeZone()),
               },
             ],
           }
@@ -159,7 +167,7 @@ export default function TaskManagement({ params: { id } }: Props) {
           setItemName("");
           onCloseAddTaskModal();
           setEditProjectLoading(false);
-          setDeadline("");
+          setDeadline(defaultDate);
         });
       })
       .catch((e) => {
@@ -441,8 +449,8 @@ export default function TaskManagement({ params: { id } }: Props) {
     async (_containers?: TaskType[]) => {
       const processing = editProject(id, _containers ?? containers);
       toast.promise(processing, {
-        loading: "Saving...",
-        success: "Saved !",
+        loading: "Saving ...",
+        success: "Saved 💥",
         error: "Failed to save",
         duration: 1000,
       });
@@ -459,7 +467,10 @@ export default function TaskManagement({ params: { id } }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editTaskName, setEditTaskName] = useState<string>("");
   const [editTaskDescription, setEditTaskDescription] = useState<string>("");
-  const [deadline, setDeadline] = useState<string>("");
+
+  let defaultDate = today(getLocalTimeZone());
+  const [deadline, setDeadline] = useState(defaultDate);
+
   const { trigger, isMutating: updateTaskLoading } = useSWRMutation(
     "editTask" + taskId,
     onEditTask
@@ -480,25 +491,28 @@ export default function TaskManagement({ params: { id } }: Props) {
   async function onRemoveTask() {
     if (!deleteTaskId) return;
     deleteTask(deleteTaskId).then(() => {
-      toast.success("Delete Success 🥲");
+      toast.info("Delete Success 🥲");
       mutateProject();
       onCloseDeleteTaskModal();
       setDeleteId("");
     });
   }
+
+  let formatter = useDateFormatter({ dateStyle: "full" });
+
   function onEditTask() {
     if (!taskId) return;
 
     editTask(taskId, {
       name: editTaskName,
       description: editTaskDescription,
-      deadline: new Date(deadline),
+      deadline: deadline.toDate(getLocalTimeZone()),
     }).then(() => {
-      toast.success("Task Edit Success");
+      toast.info("Task Edit Success");
       mutateProject();
       onClose();
       setTaskId("");
-      setDeadline("");
+      setDeadline(defaultDate);
     });
   }
 
@@ -507,9 +521,11 @@ export default function TaskManagement({ params: { id } }: Props) {
       setEditTaskName(data.name);
       setEditTaskDescription(data.description || "");
       if (data.deadline)
-        setDeadline(format(new Date(data.deadline), "yyyy-MM-dd"));
-      else setDeadline("");
+        setDeadline(parseDate(format(data.deadline, "yyyy-MM-dd")));
+      else setDeadline(defaultDate);
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -541,7 +557,7 @@ export default function TaskManagement({ params: { id } }: Props) {
   ) : (
     <div className="container mx-auto py-5">
       <Button
-        className="fixed bottom-10 right-10"
+        className="fixed bottom-20 md:bottom-10 right-10 z-50"
         isIconOnly
         variant="shadow"
         color="primary"
@@ -578,21 +594,29 @@ export default function TaskManagement({ params: { id } }: Props) {
                     value={editTaskDescription}
                     onChange={(e) => setEditTaskDescription(e.target.value)}
                   />
-                  <p>Deadline</p>
-                  <Input
-                    type="date"
+                  <DatePicker
+                    label="Deadline"
+                    isRequired
                     value={deadline}
-                    onChange={(e) => setDeadline(e.target.value)}
+                    onChange={setDeadline}
                   />
+                  <p className="text-default-500 text-sm">
+                    Selected date:{" "}
+                    {deadline
+                      ? formatter.format(deadline.toDate(getLocalTimeZone()))
+                      : "--"}
+                  </p>
 
-                  <p>Create At : {data?.createdAt.toDateString()}</p>
+                  <p className="text-success">
+                    Task Created At : {data?.createdAt.toDateString()}
+                  </p>
                 </ModalBody>
                 <ModalFooter>
                   <Button
                     color="danger"
                     variant="light"
                     onClick={() => {
-                      setDeadline("");
+                      setDeadline(defaultDate);
                       onClose();
                     }}
                   >
@@ -614,7 +638,6 @@ export default function TaskManagement({ params: { id } }: Props) {
           }
         </ModalContent>
       </Modal>
-
       {/* Add Container Modal */}
       <Modal isOpen={isOpenContainerModal} onOpenChange={onOpenContainerChange}>
         <ModalContent>
@@ -667,8 +690,9 @@ export default function TaskManagement({ params: { id } }: Props) {
               <ModalBody>
                 <div className="flex flex-col w-full items-start gap-y-4">
                   <Input
+                    isRequired
                     type="text"
-                    placeholder="Task Title"
+                    label="Task Name"
                     name="itemname"
                     value={itemName}
                     onChange={(e) => setItemName(e.target.value)}
@@ -678,12 +702,18 @@ export default function TaskManagement({ params: { id } }: Props) {
                       }
                     }}
                   />
-                  <p>Deadline</p>
-                  <Input
-                    type="date"
+                  <DatePicker
+                    label="Deadline"
+                    isRequired
                     value={deadline}
-                    onChange={(e) => setDeadline(e.target.value)}
+                    onChange={setDeadline}
                   />
+                  <p className="text-default-500 text-sm">
+                    Selected date:{" "}
+                    {deadline
+                      ? formatter.format(deadline.toDate(getLocalTimeZone()))
+                      : "--"}
+                  </p>
                 </div>
               </ModalBody>
               <ModalFooter>
@@ -735,18 +765,18 @@ export default function TaskManagement({ params: { id } }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className="flex items-center justify-between gap-y-2">
-        <h1 className="text-xl ">Task Management</h1>
+      <div className="flex items-center justify-between gap-y-2 -mt-5 md:-mt-0">
+        <h1 className="md:text-xl ">Task Management</h1>
         <Button
           onClick={onOpenContainerModal}
           color="primary"
           endContent={<PlusIcon className="w-5 h-5" />}
           variant="shadow"
         >
-          Add Container
+          Add <span className="hidden md:inline">Container</span>
         </Button>
       </div>
-      <div className="mt-10">
+      <div className="mt-5 md:mt-10">
         <div className="grid  md:grid-cols-2 xl:grid-cols-3 gap-6 overflow-auto">
           <DndContext
             sensors={sensors}

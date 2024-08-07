@@ -42,9 +42,12 @@ import {
   TrashIcon,
 } from "@heroicons/react/16/solid";
 import useSWR from "swr";
-import { editProject, getProject, onEditContainer } from "../action";
+import { editProject, getProject } from "../action";
 import { toast } from "sonner";
-import RootContainer from "./components/root-container";
+import dynamic from "next/dynamic";
+const RootContainer = dynamic(() => import("./components/root-container"), {
+  ssr: false,
+});
 
 type Props = {
   params: {
@@ -53,6 +56,13 @@ type Props = {
 };
 
 const Page = ({ params: { id } }: Props) => {
+  useEffect(() => {
+    const windowWidth = window.innerWidth;
+    if (windowWidth < 768) {
+      alert("It support a larger screen better");
+    }
+  }, []);
+
   const [containers, setContainers] = useAtom(judgeAtom);
   const { data: project, isLoading } = useSWR("project" + id, getMyProject);
   const [isSaved, setIsSaved] = useState(true);
@@ -360,8 +370,8 @@ const Page = ({ params: { id } }: Props) => {
     (_containers?: Judge[]) => {
       const processing = editProject(id, _containers ?? containers);
       toast.promise(processing, {
-        loading: "Saving...",
-        success: "Saved !",
+        loading: "Saving ...",
+        success: "Saved 💥",
         error: "Failed to save",
         duration: 1000,
       });
@@ -371,7 +381,7 @@ const Page = ({ params: { id } }: Props) => {
   );
 
   useEffect(() => {
-    const oneMinute = 2 * 1000 * 60; // milliseconds = 5 minute
+    const oneMinute = 1 * 1000 * 60; // milliseconds = 1 minute
     const interval = setInterval(() => {
       onSave();
     }, oneMinute);
@@ -396,12 +406,7 @@ const Page = ({ params: { id } }: Props) => {
   const [edit, setEdit] = useState<string>("");
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragMove={handleDragMove}
-      onDragEnd={handleDragEnd}
-    >
+    <>
       <Button
         className="fixed bottom-10 left-10"
         isIconOnly
@@ -423,83 +428,89 @@ const Page = ({ params: { id } }: Props) => {
         <ArrowDownTrayIcon className="h-6 w-6" />
       </Button>
 
-      <Modal isOpen={isOpenContainerModal} onOpenChange={onOpenContainerChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Add Container
-              </ModalHeader>
-              <ModalBody>
-                <div className="flex flex-col w-full items-start gap-y-4">
-                  <Input
-                    type="text"
-                    placeholder="Container Title"
-                    name="containername"
-                    value={containerName}
-                    onChange={(e) => setContainerName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        onAddContainer();
-                        onClose();
-                      }
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
+      >
+        <Modal
+          isOpen={isOpenContainerModal}
+          onOpenChange={onOpenContainerChange}
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Add Container
+                </ModalHeader>
+                <ModalBody>
+                  <div className="flex flex-col w-full items-start gap-y-4">
+                    <Input
+                      type="text"
+                      placeholder="Container Title"
+                      name="containername"
+                      value={containerName}
+                      onChange={(e) => setContainerName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          onAddContainer();
+                          onClose();
+                        }
+                      }}
+                    />
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onClick={onClose}>
+                    Close
+                  </Button>
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      onAddContainer();
+                      onClose();
                     }}
-                  />
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onClick={onClose}>
-                  Close
-                </Button>
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    onAddContainer();
-                    onClose();
-                  }}
-                >
-                  Add
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-
-      <main className="container h-[calc(100vh-6rem)] flex items-center gap-5">
-        <section className="h-full w-[100%] px-5 border bg-default-50 overflow-auto">
-          {!isLoading && containers.length === 1 && (
-            <p className="text-center mt-20">Create a container 🤨</p>
-          )}
-
-          <SortableContext items={_containers.map((i) => i.id)}>
-            {_containers.map((container) => (
-              <Container
-                container={container}
-                key={container.id}
-                edit={edit}
-                setEdit={setEdit}
-                setIsSaved={setIsSaved}
-              />
-            ))}
-          </SortableContext>
-
-          <DragOverlay adjustScale={false}>
-            {activeId && activeId.toString().includes("item") && (
-              <DragCard id={activeId} image={findItemImage(activeId)} />
+                  >
+                    Add
+                  </Button>
+                </ModalFooter>
+              </>
             )}
-            {activeId && activeId.toString().includes("container") && (
-              <Container container={findContainer(activeId)!} />
+          </ModalContent>
+        </Modal>
+
+        <section className="container h-[calc(100vh-6rem)] flex items-center gap-5">
+          <section className="h-full w-[100%] px-5 border bg-default-50 overflow-auto">
+            {!isLoading && containers.length === 1 && (
+              <p className="text-center mt-20">Create a container 🤨</p>
             )}
-          </DragOverlay>
+
+            <SortableContext items={_containers.map((i) => i.id)}>
+              {_containers.map((container) => (
+                <Container
+                  container={container}
+                  key={container.id}
+                  edit={edit}
+                  setEdit={setEdit}
+                  setIsSaved={setIsSaved}
+                />
+              ))}
+            </SortableContext>
+
+            <DragOverlay adjustScale={false}>
+              {activeId && activeId.toString().includes("item") && (
+                <DragCard id={activeId} image={findItemImage(activeId)} />
+              )}
+              {activeId && activeId.toString().includes("container") && (
+                <Container container={findContainer(activeId)!} />
+              )}
+            </DragOverlay>
+          </section>
+          <RootContainer onSave={onSave} setUploading={setUploading} />
         </section>
-        <RootContainer
-          onSave={onSave}
-          setUploading={setUploading}
-          setIsSaved={setIsSaved}
-        />
-      </main>
-    </DndContext>
+      </DndContext>
+    </>
   );
 };
 
@@ -554,7 +565,7 @@ function Container({
           : c
       )
     );
-    onEditContainer(id.replace("container-", ""), editTitle);
+    setIsSaved && setIsSaved(false);
     setEdit && setEdit("");
   }
 
@@ -585,7 +596,7 @@ function Container({
       {edit === id ? (
         <input
           placeholder="Edit ..."
-          className="max-w-36 border-none bg-transparent outline-none text-xl font-medium rounded-none"
+          className="w-36 border py-1 px-4 rounded-lg bg-transparent outline-none text-xl font-medium"
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}
           autoFocus

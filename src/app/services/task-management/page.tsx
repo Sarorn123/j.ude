@@ -16,14 +16,13 @@ import {
   Textarea,
   useDisclosure,
 } from "@nextui-org/react";
-import Link from "next/link";
 import useSWR from "swr";
 import { addProject, deleteProject, getProjects } from "./action";
 import { PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
 import useSWRMutation from "swr/mutation";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/jotai/user";
 
 type Props = {};
 
@@ -34,7 +33,8 @@ const TaskProjectList = (props: Props) => {
   const [deleteId, setDeleteId] = useState<string>("");
 
   // hook
-  const { user } = useKindeBrowserClient();
+  const user = useUser();
+
   const { data, isLoading } = useSWR(
     user?.id ? "task-project" : null,
     getAllProjects
@@ -169,14 +169,14 @@ const TaskProjectList = (props: Props) => {
         </ModalContent>
       </Modal>
       <div className="flex items-center justify-between">
-        <h2 className="mt-5 text-xl ">Your Projects 😀</h2>
+        <h2 className="md:text-xl ">Your Projects 😀</h2>
         <Button
           onClick={onOpen}
           color="primary"
           endContent={<PlusIcon className="h-6 w-6" />}
           variant="shadow"
         >
-          Create Project
+          Create <span className="hidden md:block">Project</span>
         </Button>
       </div>
       {isLoading && (
@@ -192,7 +192,7 @@ const TaskProjectList = (props: Props) => {
         </div>
       )}
       {data && (
-        <div className="mt-10 gap-10 grid md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-5 md:mt-10 gap-10 grid md:grid-cols-2 xl:grid-cols-4">
           {data.map((taskProject, index) => (
             <div
               key={index}

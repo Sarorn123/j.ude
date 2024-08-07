@@ -20,19 +20,19 @@ import {
 } from "@nextui-org/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { addProject, deleteProject, getProjects } from "./action";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import useSWRMutation from "swr/mutation";
 import useSWR from "swr";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useSetAtom } from "jotai";
 import { defaultRootContainer, judgeAtom } from "@/jotai/judge";
 import { toast } from "sonner";
+import { useUser } from "@/jotai/user";
 
 type Props = {};
 
 const Judge = (props: Props) => {
   const router = useRouter();
-  const { user, isLoading: authLoading } = useKindeBrowserClient();
+  const user = useUser();
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [deleteId, setDeleteId] = useState<string>("");
@@ -64,8 +64,8 @@ const Judge = (props: Props) => {
 
   function onAddProject() {
     if (!name || !user) return;
-    if (name.length > 10) {
-      toast.error("Project name is too long 🤨");
+    if (name.length < 2) {
+      toast.error("Project name is too sort 🤨");
       return;
     }
     if (description.length > 100) {
@@ -176,14 +176,14 @@ const Judge = (props: Props) => {
           </ModalContent>
         </Modal>
         <div className="flex items-center justify-between">
-          <h2 className="mt-5 text-xl">Your Projects 😀</h2>
+          <h2 className="text-xl">Your Projects 😀</h2>
           <Button
             onClick={onOpen}
             color="primary"
             endContent={<PlusIcon className="h-6 w-6" />}
             variant="shadow"
           >
-            Create Project
+            Create <span className="hidden md:inline">Project</span>
           </Button>
         </div>
         <div className="flex items-center justify-center">
@@ -193,7 +193,7 @@ const Judge = (props: Props) => {
             <p className="mt-20 text-xl">No projects yet 🥲</p>
           ) : null}
         </div>
-        <div className="mt-10 gap-10 grid md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-5 md:mt-10 gap-10 grid md:grid-cols-2 xl:grid-cols-4">
           {projects &&
             projects.map((project, index) => (
               <div

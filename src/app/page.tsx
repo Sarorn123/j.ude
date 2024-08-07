@@ -13,10 +13,17 @@ export default function App() {
           <span className="text-primary">STAY</span>
         </h1>
         <BlurStyle />
-        <p className="mt-5 text-default-500 text-center leading-8">
-          A platform that you can managing your task and make decision in the same place. <br className="lg:block hidden" /> enjoy your free tool here with no limit.
+        <p className="mt-5 text-default-500 text-center leading-8 text-sm md:text-base">
+          A platform that you can managing your task and make decision in the
+          same place. <br className="lg:block hidden" /> enjoy your free tool
+          here with no limit.
         </p>
-        <Button color="primary" variant="shadow" className="mt-5" endContent={<ArrowLongRightIcon className="h-6 w-6" />}>
+        <Button
+          color="primary"
+          variant="shadow"
+          className="mt-5"
+          endContent={<ArrowLongRightIcon className="h-6 w-6" />}
+        >
           <Link href={"/services"}>Get Started</Link>
         </Button>
       </section>

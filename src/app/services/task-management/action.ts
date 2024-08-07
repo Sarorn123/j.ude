@@ -58,11 +58,6 @@ export async function addProject(data: {
 }
 
 export async function deleteProject(id: string) {
-    await prisma.taskContainer.deleteMany({
-        where: {
-            projectId: id
-        }
-    })
     return await prisma.taskProject.delete({ where: { id } })
 }
 

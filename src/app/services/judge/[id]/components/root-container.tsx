@@ -7,7 +7,6 @@ import clsx from "clsx";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { generateClientDropzoneAccept } from "uploadthing/client";
 import { CSS } from "@dnd-kit/utilities";
 import DragCard from "./drag-card";
 import { deleteImage } from "../../action";
@@ -16,35 +15,28 @@ import { Spinner } from "@nextui-org/react";
 type Props = {
   onSave(_containers?: Judge[]): void;
   setUploading: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsSaved?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function RootContainer({ onSave, setUploading, setIsSaved }: Props) {
+function RootContainer({ onSave, setUploading }: Props) {
   const [containers, setContainers] = useAtom(judgeAtom);
   const [deletingImage, setDeletingImage] = useState<string>();
 
-  const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
-    "imageUploader",
-    {
-      onClientUploadComplete: () => {
-        console.log("uploaded successfully!");
-      },
-      onUploadError: () => {
-        alert("error occurred while uploading");
-      },
-      onUploadBegin: () => {
-        console.log("upload has begun");
-      },
-    }
-  );
-
-  const fileTypes = permittedFileInfo?.config
-    ? Object.keys(permittedFileInfo?.config)
-    : [];
+  const { startUpload, isUploading } = useUploadThing("imageUploader", {
+    onClientUploadComplete: () => {
+      console.log("uploaded successfully!");
+    },
+    onUploadError: () => {
+      alert("error occurred while uploading");
+    },
+    onUploadBegin: () => {
+      console.log("upload has begun");
+    },
+  });
 
   const rootContainer = useMemo(() => {
     return containers.find((c) => c.title === rootContainerTitle);
   }, [containers]);
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       setUploading(true);
@@ -64,11 +56,10 @@ function RootContainer({ onSave, setUploading, setIsSaved }: Props) {
               : c
           );
           setContainers(_containers);
+          onSave && onSave(_containers);
           setUploading(false);
-          setIsSaved && setIsSaved(false);
         }
       });
-      
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +68,12 @@ function RootContainer({ onSave, setUploading, setIsSaved }: Props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
+    accept: {
+      "image/jpeg": [],
+      "image/jpg": [],
+      "image/png": [],
+      "image/gif": [],
+    },
   });
 
   const { attributes, setNodeRef, transform, transition } = useSortable({
@@ -120,21 +116,19 @@ function RootContainer({ onSave, setUploading, setIsSaved }: Props) {
     >
       <div
         {...getRootProps()}
-        className="border bg-default-200 py-4 flex justify-center  w-36"
+        className={`border bg-default-200 py-4 flex justify-center w-36 ${
+          isUploading && "pointer-events-none opacity-40"
+        }`}
       >
         <p>Drop your list</p>
         <input {...getInputProps()} />
       </div>
       <SortableContext items={rootContainer?.items.map((i) => i.id) || []}>
-        <div className="overflow-auto space-y-2">
+        <div className="overflow-auto space-y-2 w-full flex flex-col items-center ">
           {isUploading && (
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 bg-transparent !mb-2">
               <p className="text-sm">Uploading</p>
-              {rootContainer!.items.length > 0 ? (
-                <Spinner color="primary" size="sm" />
-              ) : (
-                "..."
-              )}
+              <Spinner color="primary" size="sm" />
             </div>
           )}
           {rootContainer?.items.map((i) => (

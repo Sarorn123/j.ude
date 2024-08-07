@@ -3,7 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-    * {
-        @apply rounded-xl dark:border-default-300
-    }
+  * {
+    @apply rounded-md dark:border-default-300;
+  }
+  .container {
+    @apply px-5 md:px-0;
+  }
 }
