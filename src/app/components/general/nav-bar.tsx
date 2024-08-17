@@ -12,13 +12,15 @@ export default async function NavbarComponent() {
   return (
     <nav>
       <section className="container flex items-center justify-between h-20 ">
-        <Image
-          src={"/logo.png"}
-          width={200}
-          height={200}
-          className="w-32 h-16 md:h-20 object-cover"
-          alt={"logo"}
-        />
+        <Link href={"/"}>
+          <Image
+            src={"/logo.png"}
+            width={200}
+            height={200}
+            className="w-auto h-10 md:h-12 lg:h-16"
+            alt={"logo"}
+          />
+        </Link>
 
         <div className=" items-center gap-5 flex">
           <div className="hidden md:block">

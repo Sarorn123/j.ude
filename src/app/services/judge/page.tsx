@@ -37,6 +37,7 @@ const Judge = (props: Props) => {
   const [description, setDescription] = useState<string>("");
   const [deleteId, setDeleteId] = useState<string>("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [clickId, setClickId] = useState<string>("");
   const setContainers = useSetAtom(judgeAtom);
   const {
     isOpen: isDeleteOpen,
@@ -210,10 +211,13 @@ const Judge = (props: Props) => {
                     {project.name}
                     <Button
                       isIconOnly
-                      color="danger"
                       variant="shadow"
+                      color={clickId === project.id ? "primary" : "danger"}
+                      isLoading={clickId === project.id}
+                      disabled={clickId === project.id}
                       size="sm"
                       onClick={() => {
+                        setClickId(project.id);
                         onDeleteOpen();
                         setDeleteId(project.id);
                       }}

@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Login() {
   const router = useRouter();
@@ -36,10 +37,13 @@ export default function Login() {
                 <div>
                   <Link href={"/api/login/google"}>
                     <Card>
-                      <CardBody className="flex items-center justify-center flex-row active:scale-95 transition-all">
-                        <span className="font-extrabold text-primary mr-4 text-2xl">
-                          G
-                        </span>
+                      <CardBody className="flex items-center gap-x-5 justify-center flex-row active:scale-95 transition-all">
+                        <Image
+                          src={"/google.webp"}
+                          width={30}
+                          height={30}
+                          alt=""
+                        />
                         Login With Google
                       </CardBody>
                     </Card>

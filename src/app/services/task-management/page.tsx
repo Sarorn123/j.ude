@@ -23,7 +23,6 @@ import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/jotai/user";
-import { Metadata } from "next";
 
 type Props = {};
 
@@ -32,6 +31,7 @@ const TaskProjectList = (props: Props) => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [deleteId, setDeleteId] = useState<string>("");
+  const [clickId, setClickId] = useState<string>("");
 
   // hook
   const user = useUser();
@@ -198,6 +198,7 @@ const TaskProjectList = (props: Props) => {
             <div
               key={index}
               onClick={() => {
+                setClickId(taskProject.id);
                 router.push(`/services/task-management/${taskProject.id}`);
               }}
             >
@@ -209,8 +210,10 @@ const TaskProjectList = (props: Props) => {
                   {taskProject.name}
                   <Button
                     isIconOnly
-                    color="danger"
                     variant="shadow"
+                    color={clickId === taskProject.id ? "primary" : "danger"}
+                    isLoading={clickId === taskProject.id}
+                    disabled={clickId === taskProject.id}
                     size="sm"
                     onClick={() => {
                       onDeleteOpen();

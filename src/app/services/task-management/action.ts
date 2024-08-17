@@ -87,7 +87,7 @@ export async function onEditContainer(id: string, title: string) {
         data: {
             title
         }
-    })
+    }).catch((e) => console.error(e))
 }
 
 export async function getTask(id: string) {
