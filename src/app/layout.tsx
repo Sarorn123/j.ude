@@ -13,8 +13,8 @@ const poppin = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL(env.HOST_NAME),
   title: {
-    default: "J.UDGE",
-    template: "%s | J.UDGE",
+    default: "RORN TOOL",
+    template: "%s | RORN TOOL",
   },
   description:
     "TaskMaster & ReviewHub is your all-in-one solution for staying organized and sharing your opinions. Whether you are managing a complex project or simply deciding which movie to watch next, this app provides the tools you need to succeed. Join a community of organized, opinionated users and make your voice heard while staying on top of your tasks.",
@@ -22,10 +22,10 @@ export const metadata: Metadata = {
     icon: "/logo.png",
   },
   openGraph: {
-    title: "J.UDGE",
+    title: "RORN TOOL",
     description:
       "TaskMaster & ReviewHub is your all-in-one solution for staying organized and sharing your opinions. Whether you are managing a complex project or simply deciding which movie to watch next, this app provides the tools you need to succeed. Join a community of organized, opinionated users and make your voice heard while staying on top of your tasks.",
-    url: "https://j-udge.vercel.app",
+    url: "https://tool.ry-sarorn.blog",
     images: [`/logo1.png`],
   },
 };

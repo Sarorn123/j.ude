@@ -200,6 +200,7 @@ const Judge = (props: Props) => {
               <div
                 key={index}
                 onClick={() => {
+                  setClickId(project.id);
                   router.push(`/services/judge/${project.id}`);
                 }}
               >
@@ -217,7 +218,6 @@ const Judge = (props: Props) => {
                       disabled={clickId === project.id}
                       size="sm"
                       onClick={() => {
-                        setClickId(project.id);
                         onDeleteOpen();
                         setDeleteId(project.id);
                       }}
