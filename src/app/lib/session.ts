@@ -13,7 +13,7 @@ export const getCurrentUser = cache(async () => {
 export const assertAuthenticated = async () => {
     const user = await getCurrentUser();
     if (!user) {
-        throw new Error();
+        throw new Error("Unauthorized");
     }
     return user;
 };

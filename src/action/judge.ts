@@ -2,19 +2,23 @@
 
 import { env } from "@/app/lib/env"
 import prisma from "@/app/lib/prisma"
+import { assertAuthenticated } from "@/app/lib/session"
 import { Judge } from "@/jotai/judge"
 
-export async function getProjects(userId: string) {
+export async function getProjects() {
+    const user = await assertAuthenticated()
     return await prisma.judgeProject.findMany({
         where: {
-            userId
+            userId: user.id
         }
     })
 }
 export async function getProject(id: string) {
+    const user = await assertAuthenticated()
     return await prisma.judgeProject.findUnique({
         where: {
-            id
+            id,
+            userId: user.id
         },
         include: {
             containers: true
@@ -24,13 +28,14 @@ export async function getProject(id: string) {
 export async function addProject(data: {
     name: string,
     description: string,
-    userId: string,
 }) {
-    return await prisma.judgeProject.create({ data })
+    const user = await assertAuthenticated()
+    return await prisma.judgeProject.create({ data: { ...data, userId: user.id } })
 }
 
 export async function deleteProject(id: string) {
 
+    const user = await assertAuthenticated()
     const allContainer = await prisma.judgeContainer.findMany({
         where: {
             projectId: id
@@ -48,10 +53,23 @@ export async function deleteProject(id: string) {
             projectId: id
         }
     })
-    return await prisma.judgeProject.delete({ where: { id } })
+    return await prisma.judgeProject.deleteMany({ where: { id, userId: user.id } })
 }
 
 export async function editProject(id: string, containers: Judge[]) {
+
+    const user = await assertAuthenticated()
+    const project = await prisma.judgeProject.findFirst({
+        where: {
+            id,
+            userId: user.id
+        },
+        include: {
+            containers: true
+        }
+    })
+
+    if (!project) throw new Error("Project not found")
 
     const data = containers.map((container) => {
         return {
@@ -59,16 +77,7 @@ export async function editProject(id: string, containers: Judge[]) {
             items: container.items.map((item) => item.image)
         }
     })
-
-    const allContainer = await prisma.judgeContainer.findMany({
-        where: {
-            projectId: id
-        },
-        select: {
-            items: true,
-            id: true
-        }
-    })
+    const allContainer = project.containers
 
     // remove image from old miss container
     const allNewContanerIds = containers.map((container) => container.id.replaceAll("container-", ""))

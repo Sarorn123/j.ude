@@ -7,7 +7,7 @@ import { Bars2Icon, PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { useAtom } from "jotai";
 import { containerAtom } from "@/jotai/task";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { onEditContainer } from "../../action";
+import { onEditContainer } from "../../../../../action/task";
 
 type ContainerProps = {
   id: UniqueIdentifier | string;
@@ -26,7 +26,7 @@ const Container = ({
   onAddItem,
   edit,
   setEdit,
-  setIsSaved
+  setIsSaved,
 }: ContainerProps) => {
   const {
     attributes,

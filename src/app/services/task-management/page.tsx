@@ -17,12 +17,11 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import useSWR from "swr";
-import { addProject, deleteProject, getProjects } from "./action";
+import { addProject, deleteProject, getProjects } from "@/action/task";
 import { PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
 import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/jotai/user";
 
 type Props = {};
 
@@ -34,39 +33,23 @@ const TaskProjectList = (props: Props) => {
   const [clickId, setClickId] = useState<string>("");
 
   // hook
-  const user = useUser();
-
-  const { data, isLoading } = useSWR(
-    user?.id ? "task-project" : null,
-    getAllProjects
+  const { data, isLoading } = useSWR("task-project", getProjects);
+  const { isMutating: onDeleteLoading, trigger: onDelete } = useSWRMutation(
+    "task-project",
+    () => deleteProject(deleteId)
   );
-  const { isMutating: isDeleteMutating, trigger: deleteTrigger } =
-    useSWRMutation("task-project", onDeleteProject);
   const {
     isOpen: isDeleteOpen,
     onOpen: onDeleteOpen,
-    onOpenChange: onDeleteOpenChange,
+    onOpenChange: onDeleteChange,
   } = useDisclosure();
   const router = useRouter();
-
-  async function getAllProjects() {
-    if (user) {
-      return getProjects(user.id);
-    }
-  }
-
-  function onDeleteProject() {
-    if (!user) return;
-    return deleteProject(deleteId);
-  }
-
-  const { isMutating, trigger } = useSWRMutation("task-project", onAddProject);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isMutating, trigger } = useSWRMutation("task-project", onAddProject);
 
   function onAddProject() {
-    if (!name || !user) return;
-    if (name.length > 10) {
-      toast.error("Project name is too long 🤨");
+    if (name.length < 2) {
+      toast.error("Project name is too short 🤨");
       return;
     }
     if (description.length > 100) {
@@ -76,7 +59,6 @@ const TaskProjectList = (props: Props) => {
     return addProject({
       name,
       description,
-      userId: user.id,
     });
   }
 
@@ -138,7 +120,7 @@ const TaskProjectList = (props: Props) => {
           )}
         </ModalContent>
       </Modal>
-      <Modal isOpen={isDeleteOpen} onOpenChange={onDeleteOpenChange}>
+      <Modal isOpen={isDeleteOpen} onOpenChange={onDeleteChange}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -154,13 +136,13 @@ const TaskProjectList = (props: Props) => {
                 </Button>
                 <Button
                   color="danger"
-                  disabled={isDeleteMutating}
+                  disabled={onDeleteLoading}
                   onClick={() => {
-                    deleteTrigger().then(() => {
+                    onDelete().then(() => {
                       onClose();
                     });
                   }}
-                  isLoading={isDeleteMutating}
+                  isLoading={onDeleteLoading}
                 >
                   Delete
                 </Button>

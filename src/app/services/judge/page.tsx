@@ -19,7 +19,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
-import { addProject, deleteProject, getProjects } from "./action";
+import { addProject, deleteProject, getProjects } from "@/action/judge";
 import useSWRMutation from "swr/mutation";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
@@ -46,27 +46,16 @@ const Judge = (props: Props) => {
   } = useDisclosure();
   const { isMutating, trigger } = useSWRMutation("projects", onAddProject);
   const { isMutating: isDeleteMutating, trigger: deleteTrigger } =
-    useSWRMutation("projects", onDeleteProject);
+    useSWRMutation("projects", () => deleteProject(deleteId));
   const { data: projects, isLoading } = useSWR(
     user?.id ? "projects" : null,
-    getAllProjects
+    getProjects
   );
-
-  async function getAllProjects() {
-    if (user) {
-      return getProjects(user.id);
-    }
-  }
-
-  function onDeleteProject() {
-    if (!user) return;
-    return deleteProject(deleteId);
-  }
 
   function onAddProject() {
     if (!name || !user) return;
     if (name.length < 2) {
-      toast.error("Project name is too sort 🤨");
+      toast.error("Project name is too short 🤨");
       return;
     }
     if (description.length > 100) {
@@ -76,7 +65,6 @@ const Judge = (props: Props) => {
     return addProject({
       name,
       description,
-      userId: user.id,
     });
   }
 

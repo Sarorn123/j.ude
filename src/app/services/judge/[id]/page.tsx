@@ -42,9 +42,10 @@ import {
   TrashIcon,
 } from "@heroicons/react/16/solid";
 import useSWR from "swr";
-import { editProject, getProject } from "../action";
+import { editProject, getProject } from "@/action/judge";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 const RootContainer = dynamic(() => import("./components/root-container"), {
   ssr: false,
 });
@@ -64,7 +65,11 @@ const Page = ({ params: { id } }: Props) => {
   }, []);
 
   const [containers, setContainers] = useAtom(judgeAtom);
-  const { data: project, isLoading } = useSWR("project" + id, getMyProject);
+  const {
+    data: project,
+    isLoading,
+    error,
+  } = useSWR("project" + id, () => getProject(id));
   const [isSaved, setIsSaved] = useState(true);
 
   useEffect(() => {
@@ -80,7 +85,7 @@ const Page = ({ params: { id } }: Props) => {
       }));
       setContainers(containers);
     }
-  }, [project, setContainers]);
+  }, [project, setContainers, error]);
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [containerName, setContainerName] = useState("");
@@ -89,10 +94,6 @@ const Page = ({ params: { id } }: Props) => {
     onOpen: onOpenContainerModal,
     onOpenChange: onOpenContainerChange,
   } = useDisclosure();
-
-  function getMyProject() {
-    return getProject(id);
-  }
 
   const onAddContainer = () => {
     if (!containerName) return;
@@ -372,7 +373,7 @@ const Page = ({ params: { id } }: Props) => {
       toast.promise(processing, {
         loading: "Saving ...",
         success: "Saved 💥",
-        error: "Failed to save",
+        error: (message) => `An error occurred: ${message}`,
         duration: 1000,
       });
       setIsSaved(true);

@@ -48,17 +48,12 @@ import {
   editTask,
   getProject,
   getTask,
-} from "../action";
+} from "@/action/task";
 import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
-import { compareAsc, format } from "date-fns";
-import {
-  CalendarDate,
-  getLocalTimeZone,
-  parseDate,
-  today,
-} from "@internationalized/date";
-import { useLocale, useDateFormatter } from "@react-aria/i18n";
+import { format } from "date-fns";
+import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
+import { useDateFormatter } from "@react-aria/i18n";
 
 type Props = {
   params: { id: string };
@@ -71,7 +66,7 @@ export default function TaskManagement({ params: { id } }: Props) {
     data: project,
     isLoading,
     mutate: mutateProject,
-  } = useSWR("task-project" + id, getMyProject);
+  } = useSWR("task-project" + id, () => getProject(id));
 
   const [editProjectLoading, setEditProjectLoading] = useState(false);
   const [containers, setContainers] = useAtom(containerAtom);
@@ -117,12 +112,12 @@ export default function TaskManagement({ params: { id } }: Props) {
     }
   }, [project, setContainers]);
 
-  const [taskId, setTaskId] = useState<string>();
-  const [deleteTaskId, setDeleteId] = useState<string>();
+  const [taskId, setTaskId] = useState<string>("");
+  const [deleteTaskId, setDeleteId] = useState<string>("");
 
   const { data, isLoading: singleItemLoading } = useSWR(
     taskId ? `item-${taskId}` : null,
-    getSingleTask
+    () => getTask(taskId!)
   );
 
   const onAddContainer = () => {
@@ -440,18 +435,13 @@ export default function TaskManagement({ params: { id } }: Props) {
     setIsSaved(false);
   }
 
-  // db call
-  function getMyProject() {
-    return getProject(id);
-  }
-
   const onSave = useCallback(
     async (_containers?: TaskType[]) => {
       const processing = editProject(id, _containers ?? containers);
       toast.promise(processing, {
         loading: "Saving ...",
         success: "Saved 💥",
-        error: "Failed to save",
+        error: (message) => `An error occurred: ${message}`,
         duration: 1000,
       });
       setIsSaved(true);
@@ -459,15 +449,10 @@ export default function TaskManagement({ params: { id } }: Props) {
     [containers, id]
   );
 
-  function getSingleTask() {
-    if (!taskId) return;
-    return getTask(taskId);
-  }
   const [edit, setEdit] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editTaskName, setEditTaskName] = useState<string>("");
   const [editTaskDescription, setEditTaskDescription] = useState<string>("");
-
   let defaultDate = today(getLocalTimeZone());
   const [deadline, setDeadline] = useState(defaultDate);
 

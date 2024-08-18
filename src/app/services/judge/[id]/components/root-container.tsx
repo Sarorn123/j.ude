@@ -9,7 +9,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { CSS } from "@dnd-kit/utilities";
 import DragCard from "./drag-card";
-import { deleteImage } from "../../action";
+import { deleteImage } from "../../../../../action/judge";
 import { Spinner } from "@nextui-org/react";
 
 type Props = {

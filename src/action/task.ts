@@ -1,28 +1,34 @@
 "use server"
 
 import prisma from "@/app/lib/prisma";
+import { assertAuthenticated } from "@/app/lib/session";
 import { TaskType } from "@/jotai/task";
 import { Prisma } from "@prisma/client";
 
-export async function getProjects(userId: string) {
+export async function getProjects() {
+    const user = await assertAuthenticated()
     return await prisma.taskProject.findMany({
         where: {
-            userId
+            userId: user.id
         },
     })
 }
 
 export async function editProject(id: string, containers: TaskType[]) {
-    const allContainer = await prisma.taskContainer.findMany({
+    const user = await assertAuthenticated()
+
+    const project = await prisma.taskProject.findFirst({
         where: {
-            projectId: id
+            id,
+            userId: user.id
         }
     })
 
+    if (!project) throw new Error("Project not found")
     await prisma.task.deleteMany({
         where: {
-            containerId: {
-                in: allContainer.map((c) => c.id)
+            container: {
+                projectId: id
             }
         }
     })
@@ -32,7 +38,6 @@ export async function editProject(id: string, containers: TaskType[]) {
             projectId: id
         }
     })
-
 
     return await Promise.all(containers.map(async (container, index) => {
         await prisma.taskContainer.create({
@@ -52,19 +57,22 @@ export async function editProject(id: string, containers: TaskType[]) {
 export async function addProject(data: {
     name: string,
     description: string,
-    userId: string,
 }) {
-    return await prisma.taskProject.create({ data })
+    const user = await assertAuthenticated()
+    return await prisma.taskProject.create({ data: { ...data, userId: user.id } })
 }
 
 export async function deleteProject(id: string) {
-    return await prisma.taskProject.delete({ where: { id } })
+    const user = await assertAuthenticated()
+    return await prisma.taskProject.deleteMany({ where: { id, userId: user.id } })
 }
 
 export async function getProject(id: string) {
-    return await prisma.taskProject.findUnique({
+    const user = await assertAuthenticated()
+    return await prisma.taskProject.findFirst({
         where: {
-            id
+            id,
+            userId: user.id
         },
         include: {
             containers: {

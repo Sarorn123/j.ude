@@ -11,7 +11,7 @@ import {
 import { useAtom } from "jotai";
 import { containerAtom } from "@/jotai/task";
 import useSWRMutation from "swr/mutation";
-import { deleteTask } from "../../action";
+import { deleteTask } from "../../../../../action/task";
 import { Spinner } from "@nextui-org/react";
 import { format } from "date-fns";
 
