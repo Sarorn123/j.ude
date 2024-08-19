@@ -19,6 +19,7 @@ export default async function NavbarComponent() {
             height={200}
             className="w-auto h-8 md:h-10 lg:h-14"
             alt={"logo"}
+            priority
           />
         </Link>
 

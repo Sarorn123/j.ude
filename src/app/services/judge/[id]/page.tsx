@@ -23,6 +23,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   useDisclosure,
 } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
@@ -45,7 +46,6 @@ import useSWR from "swr";
 import { editProject, getProject } from "@/action/judge";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 const RootContainer = dynamic(() => import("./components/root-container"), {
   ssr: false,
 });
@@ -57,13 +57,6 @@ type Props = {
 };
 
 const Page = ({ params: { id } }: Props) => {
-  useEffect(() => {
-    const windowWidth = window.innerWidth;
-    if (windowWidth < 768) {
-      alert("It support a larger screen better");
-    }
-  }, []);
-
   const [containers, setContainers] = useAtom(judgeAtom);
   const {
     data: project,
@@ -73,8 +66,9 @@ const Page = ({ params: { id } }: Props) => {
   const [isSaved, setIsSaved] = useState(true);
 
   useEffect(() => {
+    const windowWidth = window.innerWidth;
+    if (windowWidth < 768) alert("It support a larger screen better");
     if (project) {
-      if (project.containers.length === 0) return;
       const containers: Judge[] = project.containers.map((container) => ({
         id: "container-" + container.id,
         title: container.title,
@@ -85,10 +79,14 @@ const Page = ({ params: { id } }: Props) => {
       }));
       setContainers(containers);
     }
-  }, [project, setContainers, error]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project]);
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [containerName, setContainerName] = useState("");
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [edit, setEdit] = useState<string>("");
   const {
     isOpen: isOpenContainerModal,
     onOpen: onOpenContainerModal,
@@ -363,7 +361,7 @@ const Page = ({ params: { id } }: Props) => {
     setIsSaved(false);
   }
 
-  const _containers = useMemo(() => {
+  const judgeContainers = useMemo(() => {
     return containers.filter((c) => c.title !== rootContainerTitle);
   }, [containers]);
 
@@ -372,9 +370,8 @@ const Page = ({ params: { id } }: Props) => {
       const processing = editProject(id, _containers ?? containers);
       toast.promise(processing, {
         loading: "Saving ...",
-        success: "Saved 💥",
+        success: "Saved ✅",
         error: (message) => `An error occurred: ${message}`,
-        duration: 1000,
       });
       setIsSaved(true);
     },
@@ -390,9 +387,9 @@ const Page = ({ params: { id } }: Props) => {
     return () => clearInterval(interval);
   }, [onSave]);
 
+  // handle before unload
   useEffect(() => {
     if (isSaved) return;
-
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       return "";
@@ -402,9 +399,6 @@ const Page = ({ params: { id } }: Props) => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [isSaved]);
-
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [edit, setEdit] = useState<string>("");
 
   return (
     <>
@@ -487,8 +481,14 @@ const Page = ({ params: { id } }: Props) => {
               <p className="text-center mt-20">Create a container 🤨</p>
             )}
 
-            <SortableContext items={_containers.map((i) => i.id)}>
-              {_containers.map((container) => (
+            {isLoading && (
+              <div className="flex justify-center">
+                <Spinner className="mt-10" />
+              </div>
+            )}
+
+            <SortableContext items={judgeContainers.map((i) => i.id)}>
+              {judgeContainers.map((container) => (
                 <Container
                   container={container}
                   key={container.id}
@@ -508,7 +508,11 @@ const Page = ({ params: { id } }: Props) => {
               )}
             </DragOverlay>
           </section>
-          <RootContainer onSave={onSave} setUploading={setUploading} />
+          <RootContainer
+            onSave={onSave}
+            setUploading={setUploading}
+            uploading={uploading}
+          />
         </section>
       </DndContext>
     </>

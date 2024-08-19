@@ -9,44 +9,45 @@ import { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { CSS } from "@dnd-kit/utilities";
 import DragCard from "./drag-card";
-import { deleteImage } from "../../../../../action/judge";
+import { deleteImage } from "@/action/judge";
 import { Spinner } from "@nextui-org/react";
+import { toast } from "sonner";
 
 type Props = {
   onSave(_containers?: Judge[]): void;
   setUploading: React.Dispatch<React.SetStateAction<boolean>>;
+  uploading: boolean;
 };
 
-function RootContainer({ onSave, setUploading }: Props) {
+function RootContainer({
+  onSave,
+  setUploading,
+  uploading: isUploading,
+}: Props) {
   const [containers, setContainers] = useAtom(judgeAtom);
   const [deletingImage, setDeletingImage] = useState<string>();
-
-  const { startUpload, isUploading } = useUploadThing("imageUploader", {
-    onClientUploadComplete: () => {
-      console.log("uploaded successfully!");
-    },
-    onUploadError: () => {
-      alert("error occurred while uploading");
-    },
-    onUploadBegin: () => {
-      console.log("upload has begun");
-    },
-  });
 
   const rootContainer = useMemo(() => {
     return containers.find((c) => c.title === rootContainerTitle);
   }, [containers]);
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[]) => {
       setUploading(true);
-      startUpload(acceptedFiles).then((files) => {
-        if (files) {
-          const uploadedFiles = files.map((file) => ({
-            id: `item-${file.key}`,
-            image: file.url,
+      const body = new FormData();
+      acceptedFiles.forEach((file) => {
+        body.append("files", file);
+      });
+      await fetch("/api/upload", {
+        method: "POST",
+        body,
+      })
+        .then(async (response) => {
+          const urls: string[] = await response.json();
+          const uploadedFiles = urls.map((url) => ({
+            id: `item-${url}`,
+            image: url,
           }));
-
           const _containers = containers.map((c) =>
             c.id === rootContainer?.id
               ? {
@@ -58,8 +59,12 @@ function RootContainer({ onSave, setUploading }: Props) {
           setContainers(_containers);
           onSave && onSave(_containers);
           setUploading(false);
-        }
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Something went wrong");
+          setUploading(false);
+        });
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,21 +90,19 @@ function RootContainer({ onSave, setUploading }: Props) {
 
   function deleteItem(image: string) {
     setDeletingImage(image);
-    deleteImage(image)
-      .catch((e) => console.error(e))
-      .finally(() => {
-        const _containers = containers.map((c) =>
-          c.id === rootContainer?.id
-            ? {
-                ...rootContainer,
-                items: rootContainer.items.filter((i) => i.image !== image),
-              }
-            : c
-        );
-        setContainers(_containers);
-        onSave(_containers);
-        setDeletingImage(undefined);
-      });
+    deleteImage(image).then(() => {
+      const _containers = containers.map((c) =>
+        c.id === rootContainer?.id
+          ? {
+              ...rootContainer,
+              items: rootContainer.items.filter((i) => i.image !== image),
+            }
+          : c
+      );
+      setContainers(_containers);
+      onSave(_containers);
+      setDeletingImage(undefined);
+    });
   }
 
   return (

@@ -40,6 +40,7 @@ model JudgeContainer {
   judgeProject JudgeProject @relation(fields: [projectId], references: [id])
   projectId    String
   items        String[]     @default([])
+  index        Int?
 }
 
 model TaskProject {

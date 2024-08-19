@@ -10,10 +10,11 @@ export async function getProjects() {
     return await prisma.judgeProject.findMany({
         where: {
             userId: user.id
-        }
+        },
     })
 }
 export async function getProject(id: string) {
+
     const user = await assertAuthenticated()
     return await prisma.judgeProject.findUnique({
         where: {
@@ -21,7 +22,11 @@ export async function getProject(id: string) {
             userId: user.id
         },
         include: {
-            containers: true
+            containers: {
+                orderBy: {
+                    index: "asc",
+                },
+            }
         }
     })
 }
@@ -71,52 +76,69 @@ export async function editProject(id: string, containers: Judge[]) {
 
     if (!project) throw new Error("Project not found")
 
-    const data = containers.map((container) => {
+    const newAllContainers = containers.map((container) => {
         return {
             title: container.title,
-            items: container.items.map((item) => item.image)
+            items: container.items.map((item) => item.image),
+            id: container.id.replaceAll("container-", "")
         }
     })
-    const allContainer = project.containers
+    const dbContainers = project.containers
 
     // remove image from old miss container
     const allNewContanerIds = containers.map((container) => container.id.replaceAll("container-", ""))
-    allContainer.forEach(async (dbContainer) => {
+    const idsForDelete: string[] = []
+    dbContainers.forEach(async (dbContainer) => {
         // if existed in db not have in new containers. coZ new containers can have in db also create new
         if (!allNewContanerIds.includes(dbContainer.id)) {
-            await deleteImage(dbContainer.items).catch((e) => console.error(e))
+            idsForDelete.push(dbContainer.id)
+            await deleteImage(dbContainer.items)
         }
     })
-    await prisma.judgeContainer.deleteMany({
-        where: {
-            projectId: id
-        }
+    if (idsForDelete.length) {
+        await prisma.judgeContainer.deleteMany({
+            where: {
+                id: {
+                    in: idsForDelete
+                }
+            }
+        })
+    }
+
+    newAllContainers.forEach(async (container, index) => {
+        await prisma.judgeContainer.upsert({
+            where: {
+                id: container.id
+            },
+            create: {
+                title: container.title,
+                items: container.items,
+                projectId: id,
+                index
+            },
+            update: {
+                title: container.title,
+                items: container.items,
+                index
+            }
+        })
     })
-    return await prisma.judgeProject.update({
-        where: {
-            id
-        },
-        data: {
-            containers: { create: data }
-        }
-    })
+
+    return "success"
+
 }
 
-export async function deleteImage(image: string | string[]) {
-    if (!image) return
-    const url = env.HOST_NAME + "/api/uploadthing";
-    const options = {
+export async function deleteImage(urls: string | string[]) {
+    if (!urls) return
+    const url = env.HOST_NAME + "/api/upload";
+    const body = Array.isArray(urls) ? urls : [urls]
+    return await fetch(url, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(image)
-    };
-    return await fetch(url, options)
-        .then(response => {
-            return response.json();
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+        body: JSON.stringify(body),
+        cache: 'no-store'
+    }).then((res) => "OK")
+        .catch((e) => console.error("=>", e))
 }
