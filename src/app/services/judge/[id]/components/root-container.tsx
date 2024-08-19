@@ -1,6 +1,5 @@
 "use client";
 
-import { useUploadThing } from "@/app/utils/uploadthing";
 import { Judge, judgeAtom, rootContainerTitle } from "@/jotai/judge";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import clsx from "clsx";
