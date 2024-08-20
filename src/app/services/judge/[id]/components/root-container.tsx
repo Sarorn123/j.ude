@@ -25,7 +25,6 @@ function RootContainer({
 }: Props) {
   const [containers, setContainers] = useAtom(judgeAtom);
   const [deletingImage, setDeletingImage] = useState<string>();
-
   const rootContainer = useMemo(() => {
     return containers.find((c) => c.title === rootContainerTitle);
   }, [containers]);

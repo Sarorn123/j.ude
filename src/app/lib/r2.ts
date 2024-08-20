@@ -25,13 +25,16 @@ async function uploadProcess(file: File) {
     const params = { Bucket, Key, Body: file };
     const running = new Upload({ client, params });
     await running.done();
-    return await getSignedUrl(client, new GetObjectCommand({ Bucket, Key }));
+    const url = new URL(Key, "https://pub-3eb7b81de3cd4447b7d72d3827aa209b.r2.dev").toString()
+    console.log(url)
+    return url
 }
 
 export async function deleteFile(url: string) {
     try {
         // Extract the Key from the URL
-        const Key = url.split("?")[0].split("com/")[1];
+        // const Key = url.split("?")[0].split("com/")[1];
+        const Key = url.split("dev/")[1]; // for development
         console.log({ DELETE_KEY: Key });
         // Ensure Bucket and Key are available
         if (!Bucket || !Key) {

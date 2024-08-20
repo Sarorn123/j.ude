@@ -124,7 +124,7 @@ export async function editProject(id: string, containers: Judge[]) {
         })
     })
 
-    return "success"
+    return "Success"
 
 }
 

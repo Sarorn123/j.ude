@@ -17,7 +17,7 @@ export default async function NavbarComponent() {
             src={"/logo.png"}
             width={200}
             height={200}
-            className="w-auto h-8 md:h-10 lg:h-14"
+            className="w-auto h-8 md:h-10 lg:h-12"
             alt={"logo"}
             priority
           />
