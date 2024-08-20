@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -24,7 +24,7 @@ import useSWRMutation from "swr/mutation";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useSetAtom } from "jotai";
-import { defaultRootContainer, judgeAtom } from "@/jotai/judge";
+import { judgeAtom } from "@/jotai/judge";
 import { toast } from "sonner";
 import { useUser } from "@/jotai/user";
 
@@ -67,12 +67,6 @@ const Judge = (props: Props) => {
       description,
     });
   }
-
-  useEffect(() => {
-    // reset state to default
-    setContainers([defaultRootContainer]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>

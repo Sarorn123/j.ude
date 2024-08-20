@@ -46,6 +46,7 @@ import { editProject } from "@/action/judge";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
 import { JudgeContainer, JudgeProject } from "@prisma/client";
+import { useRouter } from "next/navigation";
 const RootContainer = dynamic(() => import("./root-container"), {
   ssr: false,
 });
@@ -366,7 +367,7 @@ const JudgePlayground = ({ project }: PropsDatas) => {
       const processing = editProject(id, _containers ?? containers);
       toast.promise(processing, {
         loading: "Saving ...",
-        success: "Saved ✅",
+        success: "Saved  🎉",
         error: (message) => `An error occurred: ${message}`,
       });
       setIsSaved(true);
@@ -398,7 +399,7 @@ const JudgePlayground = ({ project }: PropsDatas) => {
   }, [isSaved]);
 
   return (
-    <>
+    <main>
       <Button
         className="fixed bottom-10 left-10"
         isIconOnly
@@ -511,7 +512,7 @@ const JudgePlayground = ({ project }: PropsDatas) => {
           />
         </section>
       </DndContext>
-    </>
+    </main>
   );
 };
 

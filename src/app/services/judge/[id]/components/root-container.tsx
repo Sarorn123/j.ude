@@ -80,7 +80,7 @@ function RootContainer({
   });
 
   const { attributes, setNodeRef, transform, transition } = useSortable({
-    id: rootContainer!.id,
+    id: rootContainer?.id || "",
     data: {
       type: "container",
     },

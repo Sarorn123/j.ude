@@ -440,7 +440,7 @@ export default function TaskManagement({ params: { id } }: Props) {
       const processing = editProject(id, _containers ?? containers);
       toast.promise(processing, {
         loading: "Saving ...",
-        success: "Saved ✅",
+        success: "Saved  🎉",
         error: (message) => `An error occurred: ${message}`,
       });
       setIsSaved(true);

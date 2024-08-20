@@ -12,10 +12,4 @@ export type Judge = {
 }
 
 export const rootContainerTitle = "root";
-export const defaultRootContainer = {
-    id: "container-0",
-    title: rootContainerTitle,
-    items: [],
-}
-
-export const judgeAtom = atom<Judge[]>([defaultRootContainer]);
+export const judgeAtom = atom<Judge[]>([]);

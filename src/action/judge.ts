@@ -3,7 +3,7 @@
 import { env } from "@/app/lib/env"
 import prisma from "@/app/lib/prisma"
 import { assertAuthenticated } from "@/app/lib/session"
-import { Judge } from "@/jotai/judge"
+import { Judge, rootContainerTitle } from "@/jotai/judge"
 
 export async function getProjects() {
     const user = await assertAuthenticated()
@@ -35,7 +35,19 @@ export async function addProject(data: {
     description: string,
 }) {
     const user = await assertAuthenticated()
-    return await prisma.judgeProject.create({ data: { ...data, userId: user.id } })
+    return await prisma.judgeProject.create({
+        data: {
+            ...data,
+            userId: user.id,
+            containers: {
+                // default root container
+                create: {
+                    title: rootContainerTitle,
+                    index: 0
+                }
+            }
+        }
+    })
 }
 
 export async function deleteProject(id: string) {
