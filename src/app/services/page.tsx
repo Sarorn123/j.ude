@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const services = [
   {
-    name: "Task Manage",
+    name: "Manage Task",
     url: "/task-management",
     image: "/todo.webp",
   },
@@ -21,12 +21,17 @@ const services = [
     url: "/judge",
     image: "/jude.webp",
   },
+  {
+    name: "Qr Code Generator",
+    url: "/qr",
+    image: "/qr.png",
+  },
 ];
 
 const Services = (props: Props) => {
   return (
     <main className="container overflow-auto">
-      <h1 className="md:mt-5 text-2xl md:text-4xl font-bold text-center text-primary-500">
+      <h1 className="md:mt-5 text-2xl md:text-3xl font-bold text-center text-primary-500">
         Services
       </h1>
 

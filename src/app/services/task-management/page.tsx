@@ -152,7 +152,7 @@ const TaskProjectList = (props: Props) => {
         </ModalContent>
       </Modal>
       <div className="flex items-center justify-between">
-        <h2 className="md:text-xl ">Your Projects 😀</h2>
+        <h2 className="text-xl font-semibold">Your Projects 😀</h2>
         <Button
           onClick={onOpen}
           color="primary"

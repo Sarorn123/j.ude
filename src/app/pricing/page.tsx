@@ -15,6 +15,7 @@ const Pricing = (props: Props) => {
         <h1 className="text-2xl md:text-4xl font-semibold">
           ABA : 500 573 754
         </h1>
+        <p className="text-danger-500">សុំប៉ុណ្ណឹងហើយអត់អោយទៀត ? 🥹</p>
       </div>
     </main>
   );
