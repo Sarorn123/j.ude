@@ -99,17 +99,14 @@ export async function onEditContainer(id: string, title: string) {
 }
 
 export async function getTask(id: string) {
-
-    return await prisma.task.findUnique({
-        where: {
-            id
-        }
+    const task = await prisma.task.findUnique({
+        where: { id }
     })
+    if (!task) throw new Error("Task not found")
+    return task
 }
 
 export async function editTask(id: string, data: Prisma.TaskUpdateInput) {
-
-
     const task = await prisma.task.findUnique({
         where: {
             id

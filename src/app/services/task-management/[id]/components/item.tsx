@@ -8,12 +8,6 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/16/solid";
-import { useAtom } from "jotai";
-import { containerAtom } from "@/jotai/task";
-import useSWRMutation from "swr/mutation";
-import { deleteTask } from "../../../../../action/task";
-import { Spinner } from "@nextui-org/react";
-import { format } from "date-fns";
 
 type ItemsType = {
   id: UniqueIdentifier;
@@ -48,25 +42,16 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
           transform: CSS.Translate.toString(transform),
         }}
         className={clsx(
-          "px-5 py-4 shadow-lg bg-background rounded-xl w-full  cursor-pointer",
+          `px-5 py-4 shadow bg-background rounded-xl w-full relative cursor-pointer ${
+            deadline && new Date() > new Date(deadline)
+              ? "shadow-danger"
+              : "shadow-primary"
+          }`,
           isDragging && "opacity-50"
         )}
       >
         <div className="flex items-center justify-between">
-          <p>
-            {title}{" "}
-            {deadline && (
-              <span
-                className={`text-sm ${
-                  new Date() > new Date(deadline)
-                    ? "text-red-500"
-                    : "text-primary-500"
-                }`}
-              >
-                {format(deadline, "( dd-MM-yy )")}
-              </span>
-            )}
-          </p>
+          <p>{title}</p>
           <div className="flex items-center gap-2">
             <button
               className="border p-2 text-xs active:scale-95 rounded-xl shadow-lg hover:shadow-xl"
