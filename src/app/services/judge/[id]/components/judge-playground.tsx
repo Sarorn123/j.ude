@@ -399,7 +399,7 @@ const JudgePlayground = ({ project }: PropsDatas) => {
   }, [isSaved]);
 
   return (
-    <main>
+    <main className="">
       <Button
         className="fixed bottom-10 left-10"
         isIconOnly

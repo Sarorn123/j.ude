@@ -25,7 +25,7 @@ const RootProvider = async ({ children }: PropsWithChildren) => {
             <div className="dark:hidden opacity-0 absolute inset-0 -z-40 h-full w-full bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"></div>
             <div className="opacity-20 absolute inset-0 -z-40 h-full w-full bg-[linear-gradient(to_right,#a39f9e_1px,transparent_1px),linear-gradient(to_bottom,#a39f9e_1px,transparent_1px)] bg-[size:6rem_4rem]"></div>
             <NavbarComponent />
-            {children}
+            <div className="overflow-auto h-[calc(100vh-80px)]">{children}</div>
           </AuthProvider>
         </NextUIProviders>
       </NextThemesProvider>

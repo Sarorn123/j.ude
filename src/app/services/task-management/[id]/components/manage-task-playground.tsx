@@ -614,7 +614,7 @@ export default function TaskManagementPlayground({ project }: Props) {
                       </p>
 
                       <p className="text-primary">
-                        Task Created At : {formatDate(data!.createdAt)}
+                        Created : {formatDate(data!.createdAt)}
                       </p>
                     </ModalBody>
                     <ModalFooter>

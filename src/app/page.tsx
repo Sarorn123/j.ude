@@ -9,7 +9,7 @@ export default function App() {
     <main className="-mt-10 transition ease-in-out delay-150 duration-150">
       <section className="container  h-[calc(100vh-80px)] flex flex-col items-center justify-center">
         <h1 className="pb-4 text-4xl md:text-6xl xl:text-8xl font-bold text-center bg-gradient-to-r from-primary to-danger bg-clip-text text-transparent">
-          A set of tools to help you stay organized.
+          A bunch of tools to help you stay organized.
         </h1>
         <BlurStyle />
         <p className="mt-5 text-default-500 text-center leading-8 text-sm md:text-base">

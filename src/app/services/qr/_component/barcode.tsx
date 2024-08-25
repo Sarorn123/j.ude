@@ -26,7 +26,7 @@ const Barcode = (props: Props) => {
   };
 
   return (
-    <section className="mt-10">
+    <section>
       <h2 className="md:text-xl font-semibold">Barcode</h2>
       <div className="flex flex-col md:flex-row gap-x-10 mt-5">
         <div className="md:w-1/2">
@@ -64,7 +64,7 @@ const Barcode = (props: Props) => {
             </p>
             <Button
               onClick={handleDownload}
-              className="mt-5"
+              className="my-5 "
               variant="shadow"
               color="primary"
             >

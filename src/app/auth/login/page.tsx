@@ -18,7 +18,6 @@ import Image from "next/image";
 
 export default function Login() {
   const router = useRouter();
-
   const { isOpen, onOpenChange } = useDisclosure({
     defaultOpen: true,
     onClose() {
@@ -42,6 +41,7 @@ export default function Login() {
                           src={"/google.webp"}
                           width={30}
                           height={30}
+                          className="h-6 lg:w-8 w-6 lg:h-8"
                           alt=""
                         />
                         Login With Google

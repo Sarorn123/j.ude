@@ -29,7 +29,7 @@ const QRCodePage = (props: Props) => {
   }
 
   return (
-    <main className="container">
+    <main className="container overflow-auto">
       <h2 className="md:text-xl font-semibold">QR Code </h2>
       <div className="flex flex-col md:flex-row  gap-x-10 mt-5">
         <div className="md:w-1/2">
@@ -74,6 +74,7 @@ const QRCodePage = (props: Props) => {
           </div>
         ) : null}
       </div>
+      <hr className="my-5" />
       <Barcode />
     </main>
   );
