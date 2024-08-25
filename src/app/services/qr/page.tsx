@@ -6,6 +6,8 @@ import { Button, Textarea } from "@nextui-org/react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { ArrowDownIcon } from "@heroicons/react/16/solid";
+import Barcode from "./_component/barcode";
+import { saveAs } from "file-saver";
 
 type Props = {};
 
@@ -14,8 +16,8 @@ const QRCodePage = (props: Props) => {
   const [text, setText] = useState<string>("");
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
-  function generate() {
-    if (text.length < 3 || text.length > 500) return setIsInvalid(true);
+  function generate(text: string) {
+    if (text.length == 0 || text.length > 500) return setIsInvalid(true);
     QRCode.toDataURL(text, { scale: 10, errorCorrectionLevel: "H" })
       .then((url) => {
         setData(url);
@@ -28,26 +30,22 @@ const QRCodePage = (props: Props) => {
 
   return (
     <main className="container">
-      <h2 className="md:text-xl font-semibold">Qr Code Generater </h2>
-      <div className="flex flex-col md:flex-row  gap-x-10 mt-5 md:mt-10">
+      <h2 className="md:text-xl font-semibold">QR Code </h2>
+      <div className="flex flex-col md:flex-row  gap-x-10 mt-5">
         <div className="md:w-1/2">
           <Textarea
             type="text"
             label="Qr Code Text"
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              const _text = e.target.value;
+              setText(_text);
+              generate(_text);
+            }}
             isRequired
             isInvalid={isInvalid}
-            errorMessage="Please enter more than 3 character"
+            errorMessage="Please enter some text"
           />
-          <Button
-            onClick={generate}
-            className="mt-2 md:mt-5"
-            variant="shadow"
-            color="primary"
-          >
-            Generate
-          </Button>
         </div>
         {data ? (
           <div className="md:w-1/2 mt-5 md:mt-0">
@@ -64,10 +62,7 @@ const QRCodePage = (props: Props) => {
             </p>
             <Button
               onClick={() => {
-                const a = document.createElement("a");
-                a.href = data;
-                a.download = "qrcode.png";
-                a.click();
+                saveAs(data, "qrcode.png");
               }}
               className="mt-5"
               variant="shadow"
@@ -79,6 +74,7 @@ const QRCodePage = (props: Props) => {
           </div>
         ) : null}
       </div>
+      <Barcode />
     </main>
   );
 };

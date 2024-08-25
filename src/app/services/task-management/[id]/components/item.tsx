@@ -42,7 +42,7 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
           transform: CSS.Translate.toString(transform),
         }}
         className={clsx(
-          `px-5 py-4 shadow bg-background rounded-xl w-full relative cursor-pointer ${
+          `px-5 py-4 shadow bg-background rounded-xl w-full relative  ${
             deadline && new Date() > new Date(deadline)
               ? "shadow-danger"
               : "shadow-primary"

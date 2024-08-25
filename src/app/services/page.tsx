@@ -22,7 +22,7 @@ const services = [
     image: "/jude.webp",
   },
   {
-    name: "Qr Code Generator",
+    name: "Qr & Barcode Generator",
     url: "/qr",
     image: "/qr.png",
   },
@@ -52,7 +52,7 @@ const Services = (props: Props) => {
                 priority
               />
               <CardFooter className="justify-center before:bg-white/10 border-white/20 border-2 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-2 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-                <p className="text-xs md:text-base text-primary-500 font-semibold">
+                <p className="text-xs md:text-base text-success font-semibold">
                   {service.name}
                 </p>
               </CardFooter>

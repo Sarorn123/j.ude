@@ -454,15 +454,19 @@ export default function TaskManagementPlayground({ project }: Props) {
 
   const onSave = useCallback(
     async (_containers?: TaskType[]) => {
-      const processing = editProject(id, _containers ?? containers);
+      const processing = editProject(id, _containers ?? containers).then(() => {
+        startTransition(() => {
+          router.refresh();
+          setIsSaved(true);
+        });
+      });
       toast.promise(processing, {
         loading: "Saving ...",
         success: "Saved  🎉",
         error: (message) => `An error occurred: ${message}`,
       });
-      setIsSaved(true);
     },
-    [containers, id]
+    [containers, id, router]
   );
 
   const [edit, setEdit] = useState<string>("");

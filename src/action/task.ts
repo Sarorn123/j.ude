@@ -88,9 +88,13 @@ export async function getProject(id: string) {
 }
 
 export async function onEditContainer(id: string, title: string) {
-    return await prisma.taskContainer.update({
+    const user = await assertAuthenticated()
+    return await prisma.taskContainer.updateMany({
         where: {
-            id
+            id,
+            progressProject: {
+                userId: user.id
+            }
         },
         data: {
             title

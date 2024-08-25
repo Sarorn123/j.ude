@@ -4,7 +4,7 @@ export const middleware = async function (req: NextRequest) {
   const cookie = req.cookies.get("auth_session");
   const pathname = req.nextUrl.pathname;
 
-  if (!cookie && (pathname.includes("/task-management") || pathname.includes("/judge"))) {
+  if (!cookie && (pathname.includes("/task-management") || pathname.includes("/judge") || pathname.includes("/qr"))) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
