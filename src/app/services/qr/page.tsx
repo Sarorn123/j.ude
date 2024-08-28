@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ArrowDownIcon } from "@heroicons/react/16/solid";
 import Barcode from "./_component/barcode";
 import { saveAs } from "file-saver";
+import { Metadata } from "next";
 
 type Props = {};
 

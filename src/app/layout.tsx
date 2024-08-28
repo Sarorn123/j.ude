@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@nextui-org/react";
-import { env } from "./lib/env";
+import { env } from "./lib/env/server";
 import RootProvider from "./components/provider/root-provider";
 
 const poppin = Poppins({

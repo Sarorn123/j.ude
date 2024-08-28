@@ -14,17 +14,22 @@ const services = [
   {
     name: "Manage Task",
     url: "/task-management",
-    image: "/todo.webp",
+    image: "/todo.jpg",
   },
   {
     name: "Judge Everything",
     url: "/judge",
-    image: "/jude.webp",
+    image: "/judge.jpg",
   },
   {
     name: "Qr & Barcode Generator",
     url: "/qr",
-    image: "/qr.png",
+    image: "/qr.jpg",
+  },
+  {
+    name: "Chat With PDF",
+    url: "/pdf-chat",
+    image: "/pdf.jpg",
   },
 ];
 
@@ -45,7 +50,7 @@ const Services = (props: Props) => {
             >
               <Image
                 alt=""
-                className="object-cover w-full h-full pb-5"
+                className="object-cover w-full h-full"
                 height={1000}
                 src={service.image}
                 width={1000}

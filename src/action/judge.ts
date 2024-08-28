@@ -1,6 +1,6 @@
 "use server"
 
-import { env } from "@/app/lib/env"
+import { env } from "@/app/lib/env/server"
 import prisma from "@/app/lib/prisma"
 import { assertAuthenticated } from "@/app/lib/session"
 import { Judge, rootContainerTitle } from "@/jotai/judge"

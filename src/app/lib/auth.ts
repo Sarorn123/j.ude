@@ -3,7 +3,7 @@ import { Lucia } from "lucia";
 import { cookies } from "next/headers";
 import { Session } from "lucia";
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import { env } from "./env";
+import { env } from "./env/server";
 import prisma from "./prisma";
 import { User } from "@prisma/client";
 

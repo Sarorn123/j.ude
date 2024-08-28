@@ -80,10 +80,12 @@ export default function TaskManagementPlayground({ project }: Props) {
   const [isSaved, setIsSaved] = useState(true);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-
   const [editProjectLoading, setEditProjectLoading] = useState(false);
   const [containers, setContainers] = useAtom(containerAtom);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [taskId, setTaskId] = useState<string>("");
+  const [deleteTaskId, setDeleteId] = useState<string>("");
+
   const [currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier>();
   const [containerName, setContainerName] = useState("");
@@ -124,9 +126,6 @@ export default function TaskManagementPlayground({ project }: Props) {
       setContainers(containers);
     }
   }, [project, setContainers]);
-
-  const [taskId, setTaskId] = useState<string>("");
-  const [deleteTaskId, setDeleteId] = useState<string>("");
 
   const {
     data,

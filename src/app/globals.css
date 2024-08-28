@@ -10,3 +10,24 @@
     @apply px-5 md:px-0;
   }
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #b9d9ff;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #016fee;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0170eeaf;
+}

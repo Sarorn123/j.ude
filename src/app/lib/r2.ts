@@ -1,7 +1,8 @@
 import { DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { env } from "@/app/lib/env";
+import { env } from "@/app/lib/env/server";
+import prisma from "./prisma";
 
 const Bucket = env.R2_BUCKET
 export const client = new S3Client({
@@ -25,8 +26,19 @@ async function uploadProcess(file: File) {
     const params = { Bucket, Key, Body: file };
     const running = new Upload({ client, params });
     await running.done();
+
     const url = new URL(Key, "https://pub-3eb7b81de3cd4447b7d72d3827aa209b.r2.dev").toString()
-    console.log(url)
+
+    // save to starage table
+    await prisma.fileStorage.create({
+        data: {
+            name: orgName,
+            type: file.type,
+            url,
+            hash: "",
+        }
+    })
+
     return url
 }
 
