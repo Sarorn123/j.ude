@@ -51,9 +51,9 @@ const Services = (props: Props) => {
               <Image
                 alt=""
                 className="object-cover w-full h-full"
-                height={1000}
+                height={500}
                 src={service.image}
-                width={1000}
+                width={500}
                 priority
               />
               <CardFooter className="justify-center before:bg-white/10 border-white/20 border-2 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-2 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">

@@ -80,11 +80,10 @@ export async function updateHistory(data: AskBody): Promise<ChatPdf> {
     const user = await assertAuthenticated()
     if (!user) throw new Error("User not found")
     const { sourceId, messages: conversation } = data
-    const updated = await prisma.chatPdf.update({
+    return await prisma.chatPdf.update({
         where: { sourceId },
         data: { conversation }
     })
-    return updated
 }
 
 export async function updateSummary(sourceId: string, summary: string): Promise<ChatPdf> {

@@ -270,7 +270,7 @@ const PdfChatPlayground = ({ projects, PDF_API_KEY, PDF_URL }: Props) => {
               <ModalBody>
                 <div className="grid grid-cols-2  gap-5">
                   {uploading ? (
-                    <div className="flex items-center justify-center border rounded-2xl">
+                    <div className="flex items-center justify-center border rounded-2xl h-60">
                       <Spinner className="w-10 h-10" color="primary" />
                     </div>
                   ) : (
