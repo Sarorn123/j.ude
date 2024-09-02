@@ -35,7 +35,7 @@ const services = [
 
 const Services = (props: Props) => {
   return (
-    <main className="container overflow-auto">
+    <main className="container overflow-auto h-full">
       <h1 className="text-2xl md:text-3xl font-bold text-center text-primary-500">
         Services
       </h1>
@@ -46,7 +46,7 @@ const Services = (props: Props) => {
             <Card
               isFooterBlurred
               key={service.url}
-              className="shadow-lg h-40 md:h-80  hover:scale-95 border shadow-primary-100"
+              className="shadow-lg h-40 md:h-80  hover:scale-95 border shadow-warning-100"
             >
               <Image
                 alt=""

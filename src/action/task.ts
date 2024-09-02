@@ -80,7 +80,11 @@ export async function getProject(id: string) {
                     index: "asc",
                 },
                 include: {
-                    tasks: true,
+                    tasks: {
+                        orderBy: {
+                            createdAt: "desc",
+                        }
+                    },
                 }
             }
         }

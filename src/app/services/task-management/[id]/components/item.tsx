@@ -42,7 +42,7 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
           transform: CSS.Translate.toString(transform),
         }}
         className={clsx(
-          `px-5 py-4 shadow bg-background rounded-xl w-full relative  ${
+          `px-5 py-4 shadow bg-background cursor-auto rounded-xl w-full relative  ${
             deadline && new Date() > new Date(deadline)
               ? "shadow-danger"
               : "shadow-primary"
@@ -66,10 +66,10 @@ const Items = ({ id, title, onActiveItem, deadline }: ItemsType) => {
               <TrashIcon className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
             </button>
             <button
-              className="border p-2 text-xs rounded-xl shadow-lg hover:shadow-xl"
+              className="border p-2 text-xs rounded-xl shadow-lg hover:shadow-xl hover:cursor-grab"
               {...listeners}
             >
-              <HandRaisedIcon className="w-4 h-4 md:w-5 md:h-5 hover:cursor-grab text-primary-500" />
+              <HandRaisedIcon className="w-4 h-4 md:w-5 md:h-5  text-primary-500" />
             </button>
           </div>
         </div>

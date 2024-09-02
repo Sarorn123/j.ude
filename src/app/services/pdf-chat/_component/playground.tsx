@@ -361,7 +361,8 @@ const PdfChatPlayground = ({ projects, PDF_API_KEY, PDF_URL }: Props) => {
           </div>
           {/* Render Message */}
           <div className="py-5 overflow-auto space-y-2  h-full" ref={messageEl}>
-            {conversation.map((message, index) => (
+            {/* render only latest 50 messages */}
+            {conversation.slice(-50).map((message, index) => (
               <div key={index}>
                 {message.role === "user"
                   ? renderUserMessage(message.content, user?.picture ?? "")
@@ -452,30 +453,44 @@ function renderAIMessage(message: string) {
   );
 }
 function markdown(message: string) {
+  const matches = message.match(/\[([^\]]+)\]/g);
+
+  // Remove the square brackets from the matches
+  const extractedText = matches && matches.map((match) => match.slice(1, -1));
+  const cleanedText = message.replace(/\[.*?\]/g, "");
+
   return (
-    <ReactMarkdown
-      components={{
-        a: ({ node, ...props }) => (
-          <a
-            target="_blank"
-            rel="noreferrer"
-            {...props}
-            className="text-primary underline cursor-pointer"
-          />
-        ),
-        code: ({ node, className, ...props }) => {
-          return (
-            <CodeRenderer
-              // @ts-ignore
-              code={node?.children[0]?.value as string}
-              className={className as string}
+    <>
+      <ReactMarkdown
+        components={{
+          a: ({ node, ...props }) => (
+            <a
+              target="_blank"
+              rel="noreferrer"
               {...props}
+              className="text-primary underline cursor-pointer"
             />
-          );
-        },
-      }}
-    >
-      {message}
-    </ReactMarkdown>
+          ),
+          code: ({ node, className, ...props }) => {
+            return (
+              <CodeRenderer
+                // @ts-ignore
+                code={node?.children[0]?.value as string}
+                className={className as string}
+                {...props}
+              />
+            );
+          },
+        }}
+      >
+        {cleanedText}
+      </ReactMarkdown>
+      {extractedText && (
+        <p className="mt-2 text-danger">
+          ( Resource from{" "}
+          {extractedText.map((t) => t.replaceAll("P", "Page ")).join(", ")} )
+        </p>
+      )}
+    </>
   );
 }
